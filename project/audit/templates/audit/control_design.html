@@ -1,0 +1,57 @@
+{% load custom_filters %}
+<h1>Prueba de Diseño</h1>
+
+<form method="POST">
+    {% csrf_token %}
+    
+    <!-- Control Info (cannot be changed) -->
+    <h3>Control: {{ control.name }}</h3>
+    <p>{{ control.description }}</p>
+    
+    <!-- New Fields for Validation -->
+    <div>
+        <label for="date_elaborated">Fecha ejecución de la prueba:</label>
+        <input type="date" name="date_elaborated" value="{{ validation.date_elaborated|date:'Y-m-d' }}" />
+    </div>
+
+    <div>
+        <label for="person_name">Nombre de la persona que hizo la prueba:</label>
+        <input type="text" name="person_name" value="{{ validation.person_name }}" />
+    </div>
+
+    <div>
+        <label for="person_role">Cargo de la persona:</label>
+        <input type="text" name="person_role" value="{{ validation.person_role }}" />
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Validaciones de Diseño</th>
+                <th>Respuesta</th>
+                <th>Explicación</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for question in questions %}
+            <tr>
+                <td>{{ question.question }}</td>
+                <td>
+                    <select name="response_{{ question.id }}" class="form-select">
+                        <option value="Sí" {% if existing_answers|get_answer_for_question:question.id == 'Sí' %}selected{% endif %}>Sí</option>
+                        <option value="No" {% if existing_answers|get_answer_for_question:question.id == 'No' %}selected{% endif %}>No</option>
+                        <option value="No Aplica" {% if existing_answers|get_answer_for_question:question.id == 'No Aplica' %}selected{% endif %}>No Aplica</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="explanation_{{ question.id }}" class="form-control" required
+                           value="{% if existing_answers|get_explanation_for_question:question.id %}{{ existing_answers|get_explanation_for_question:question.id }}{% endif %}">
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary">Regresar</a>
+</form>

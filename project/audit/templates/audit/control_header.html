@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Encabezado del Control</title>
+</head>
+<body>
+    <h1>Encabezado del Control</h1>
+
+    <h2>Información del Control</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        <!-- Display Control Info -->
+        <p><strong>Nombre:</strong> {{ control.name }}</p>
+        <p><strong>Descripción:</strong> {{ control.description }}</p>
+
+        <!-- Editable Fields -->
+        <div>
+            <label for="fecha_elaboracion">Fecha de Elaboración:</label>
+            <input type="date" name="fecha_elaboracion" id="fecha_elaboracion"
+                   {% if control.date_elaborated %}
+                       value="{{ control.date_elaborated|date:"Y-m-d" }}"
+                   {% else %}
+                       value=""
+                   {% endif %}
+            >
+        </div>
+
+        <div>
+            <label for="estado">Estado:</label>
+            <select name="estado" id="estado">
+                <option value="Sin iniciar" {% if control.status == 'Sin iniciar' %}selected{% endif %}>Sin iniciar</option>
+                <option value="En proceso" {% if control.status == 'En proceso' %}selected{% endif %}>En proceso</option>
+                <option value="Terminado" {% if control.status == 'Terminado' %}selected{% endif %}>Terminado</option>
+                <option value="No evaluado" {% if control.status == 'No evaluado' %}selected{% endif %}>No evaluado</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="total_horas">Total Horas Invertidas:</label>
+            <input type="number" name="total_horas" id="total_horas" value="{{ control.total_hours }}" step="any">
+        </div>
+
+        <div>
+            <label for="recursos">Recursos Consultados:</label>
+            <textarea name="recursos" id="recursos">{{ control.consulted_resources }}</textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">Regresar</a>
+    </form>
+</body>
+</html>

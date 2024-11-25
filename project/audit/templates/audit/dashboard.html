@@ -1,0 +1,48 @@
+<h1>Controles Asignados</h1>
+
+<!-- Auditor and Cycle Information -->
+<p>Auditor: {{ user_name }}</p>
+<p>Ciclo: {{ selected_cycle.semester }} - {{ selected_cycle.year }}</p>
+<a href="{% url 'login' %}">Cerrar sesión</a>
+
+<!-- Display assigned controls -->
+<h2>Controles del ciclo seleccionado</h2>
+{% if controls %}
+<table border="1">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Código de Control</th>
+            <th>Estado Control</th>
+            <th colspan="3">Seleccionar</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for control in controls %}
+            {% for validation in control.validations.all %}
+            <tr>
+                <td>{{ control.id }}</td>
+                <td>{{ control.name }}</td>
+                <td>
+                    {% if validation.design_score%}
+                        {% if validation.design_score == 100 %}
+                            Satisfactorio
+                        {% else %}
+                            Insatisfactorio
+                        {% endif %}
+                    {% else %}
+                        No Evaluado
+                    {% endif %}
+                </td> 
+                <td>
+                    <a href="{% url 'control_header' control.id %}" class="btn btn-primary">Encabezado</a>
+                    <a href="{% url 'control_design' control.id %}" class="btn btn-secondary">Diseño</a>
+                </td>                
+            </tr>
+            {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <p>No se han asignado controles para este ciclo.</p>
+{% endif %}
